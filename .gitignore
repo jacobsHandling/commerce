@@ -103,18 +103,5 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-    © 2021 GitHub, Inc.
-    Terms
-    Privacy
-    Security
-    Status
-    Docs
-
-    Contact GitHub
-    Pricing
-    API
-    Training
-    Blog
-    About
-
-Loading complete
+# jks additions
+migrations/
