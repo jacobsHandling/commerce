@@ -5,6 +5,8 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .models import User
+from .forms import *
+
 
 
 def index(request):
@@ -61,3 +63,19 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
+
+
+def new_listing(request):
+    """creates a new listing"""
+    if request.method == 'POST':
+        form = ListingForm(request.POST)
+        if form.is_valid():
+            # process the data in form.cleaned_data
+            return render(request, "auctions/index.html", {
+                "message": "New listing saved successfully!"
+            })
+    else:
+        form = ListingForm()
+        return render(request, "auctions/new_listing.html", {
+            "form": form
+        })

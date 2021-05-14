@@ -1,6 +1,21 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.fields import IntegerField
 
 
 class User(AbstractUser):
     pass
+
+
+class Listing(models.Model):
+    title = models.CharField(max_length=64)
+    description = models.TextField(max_length=512)
+    current_bid = models.IntegerField()
+    image_url = models.URLField(blank=True)
+
+class Bid(models.Model):
+    amount = models.IntegerField()
+
+class ListingComment(models.Model):
+    user = models.CharField(max_length=64)
+    content = models.TextField()
