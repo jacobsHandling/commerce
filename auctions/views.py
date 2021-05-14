@@ -70,17 +70,6 @@ def new_listing(request):
     if request.method == 'POST':
         form = ListingForm(request.POST)
         if form.is_valid():
-            # new_title = form.cleaned_data['title']
-            # new_description = form.cleaned_data['description']
-            # starting_bid = form.cleaned_data['bid']
-            # new_image_url = form.cleaned_data['image_url']
-            # listing = Listing(
-            #     title=new_title,
-            #     description=new_description,
-            #     current_bid=starting_bid,
-            #     image_url=new_image_url
-            #     )
-            # listing.save()
             form.save()
             return render(request, "auctions/index.html", {
                 "message": "New listing saved successfully!"

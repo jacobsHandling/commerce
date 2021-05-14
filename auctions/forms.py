@@ -12,12 +12,6 @@ from .models import Listing
     # return True
     # place the form’s data in its cleaned_data attribute.
 
-# class ListingForm(forms.Form):
-#     title = forms.CharField(max_length=64)  #Django will automatically render label="Title" based on the var name :O
-#     description = forms.CharField(widget=forms.Textarea)
-#     bid = forms.IntegerField()
-#     image_url = forms.URLField()
-
 class ListingForm(ModelForm):
     class Meta:
         model = Listing
