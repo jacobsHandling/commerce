@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models.fields import IntegerField
+from django.db.models.fields import IntegerField, related
 
 
 class User(AbstractUser):
@@ -22,3 +22,10 @@ class Bid(models.Model):
 class ListingComment(models.Model):
     user = models.CharField(max_length=64)
     content = models.TextField()
+
+class Category(models.Model):
+    name = models.CharField(max_length=64)
+    listings = models.ManyToManyField(Listing, blank=True, related_name="categories")
+
+    def __str__(self):
+        return f"{self.name}"
