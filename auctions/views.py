@@ -4,8 +4,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
-from .forms import *
+from .models import User, Listing, Bid, ListingComment
+from .forms import ListingForm
 
 
 
@@ -66,16 +66,26 @@ def register(request):
 
 
 def new_listing(request):
-    """creates a new listing"""
+    """Handles creating a new listing"""
     if request.method == 'POST':
         form = ListingForm(request.POST)
         if form.is_valid():
-            # process the data in form.cleaned_data
+            # new_title = form.cleaned_data['title']
+            # new_description = form.cleaned_data['description']
+            # starting_bid = form.cleaned_data['bid']
+            # new_image_url = form.cleaned_data['image_url']
+            # listing = Listing(
+            #     title=new_title,
+            #     description=new_description,
+            #     current_bid=starting_bid,
+            #     image_url=new_image_url
+            #     )
+            # listing.save()
+            form.save()
             return render(request, "auctions/index.html", {
                 "message": "New listing saved successfully!"
             })
     else:
-        form = ListingForm()
         return render(request, "auctions/new_listing.html", {
-            "form": form
+            "form": ListingForm()
         })
