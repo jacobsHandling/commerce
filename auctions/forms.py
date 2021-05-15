@@ -15,4 +15,4 @@ from .models import Listing
 class ListingForm(ModelForm):
     class Meta:
         model = Listing
-        fields = ['title', 'current_bid', 'image_url', 'description']
+        fields = ['title', 'starting_bid', 'image_url', 'description']
