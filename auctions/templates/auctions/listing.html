@@ -1,0 +1,23 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<h2>{{ listing.title  }} {% if listing.category %} ({{ listing.category }}) {% endif %}</h2>
+    <h3>Current Bid: {{ listing.current_bid }}</h3>
+    <h3>Bid History:</h3>
+        <ol>
+            {% for bid in bids %}
+            <li>
+                {{ bid.amount }} | {{ bid.time }} | {{ bid.user }}
+            </li>
+            {% endfor %}
+            <li>
+                Starting price: {{ listing.starting_bid }} 
+            </li>
+        </ol>
+    <img src={{ listing.image_url }} height="100px">
+    <div>
+        {{ listing.description }}
+    </div>
+    
+{% endblock %}

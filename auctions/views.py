@@ -83,6 +83,11 @@ def new_listing(request):
             "form": ListingForm()
         })
 
-def listing(request):
+def listing(request, listing_id: int):
     """Renders the page for a listing"""
-    pass
+    listing = Listing.objects.get(id=listing_id)
+    bids = Bid.objects.filter(listing_id=listing_id)
+    return render(request, "auctions/listing.html", {
+        "listing": listing,
+        "bids": bids
+    })
