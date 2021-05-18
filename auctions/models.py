@@ -17,7 +17,7 @@ class User(AbstractUser):
 class Bid(models.Model):
     amount = models.IntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bids")
-    listing = models.ForeignKey('Listing', on_delete=models.CASCADE, related_name="bids")
+    listing_id = models.ForeignKey('Listing', on_delete=models.CASCADE, related_name="bids")
     time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -28,6 +28,7 @@ class Listing(models.Model):
     description = models.TextField(max_length=512)
     # current_bid = models.ForeignKey(Bid, related_name="listing")
     current_bid = models.IntegerField()
+    starting_bid = models.IntegerField()
     image_url = models.URLField(blank=True, max_length=512)
     # category = models.ManyToManyField(Category, blank=True, related_name="listings")
     category = models.CharField(max_length=64, blank=True)
