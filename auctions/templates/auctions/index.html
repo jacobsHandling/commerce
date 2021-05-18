@@ -4,7 +4,27 @@
     {% if message %}
        <div>{{ message }}</div> 
     {% endif %}
-    <h2>Active Listings</h2>
-
-    TODO
+    {% if listings %}
+        <h2>Active Listings</h2>
+        <ul>
+            {% for listing in listings %}
+            <!-- see https://getbootstrap.com/docs/4.4/components/card/ -->
+                <li class="card" style="width: 18rem;">
+                    {% if listing.image_url %}
+                        <img src={{ listing.image_url }} class="card-img-top">
+                    {% endif %}
+                    <div class="card-body">
+                        <h3 class="card-title">{{ listing.title }}</h3>
+                        <p class="card-text">
+                            Current Bid: {{ listing.current_bid }} <br>
+                            Description: {{ listing.description }} <br>
+                        </p>
+                        <a href="{% url 'listing' listing.id %}" class="btn btn-primary">View Listing</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <h2>No Active Listings</h2>
+    {% endif %}
 {% endblock %}

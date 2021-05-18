@@ -11,7 +11,10 @@ from .forms import ListingForm
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    listings = Listing.objects.all()
+    return render(request, "auctions/index.html", {
+        "listings": listings
+    })
 
 
 def login_view(request):
@@ -79,3 +82,7 @@ def new_listing(request):
         return render(request, "auctions/new_listing.html", {
             "form": ListingForm()
         })
+
+def listing(request):
+    """Renders the page for a listing"""
+    pass
