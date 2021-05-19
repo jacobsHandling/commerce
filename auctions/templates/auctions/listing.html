@@ -3,8 +3,18 @@
 {% block body %}
 
 <h2>{{ listing.title  }} {% if listing.category %} ({{ listing.category }}) {% endif %}</h2>
-    <h3>Current Bid: {{ listing.current_bid }}</h3>
-    <h3>Bid History:</h3>
+    <div>
+        Current Bid: {{ listing.current_bid }}
+        {% if user.is_authenticated %}
+            {% if watching %}
+                <a href="{% url 'unwatch' listing.id %}">Unwatch</a>
+            {% else %}
+                <a href="{% url 'watch' listing.id %}">Watch</a>
+            {% endif %}
+        {% endif %}        
+    </div>
+    <div>
+        Bid History:
         <ol>
             {% for bid in bids %}
             <li>
@@ -15,7 +25,10 @@
                 Starting price: {{ listing.starting_bid }} 
             </li>
         </ol>
-    <img src={{ listing.image_url }} height="100px">
+    </div>
+    <div>
+        <img src={{ listing.image_url }} height="100px">
+    </div>
     <div>
         {{ listing.description }}
     </div>

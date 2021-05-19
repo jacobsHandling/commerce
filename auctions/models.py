@@ -5,8 +5,10 @@ from django.db.models.fields import IntegerField, related
 
 
 class User(AbstractUser):
-    pass
+    watchlist = models.ManyToManyField('Listing', blank=True, related_name="watchers")
 
+    def __str__(self):
+        return f"{self.username}"
 # class Category(models.Model):
 #     name = models.CharField(max_length=64)
 #     # listings = models.ManyToManyField(Listing, blank=True, related_name="categories")

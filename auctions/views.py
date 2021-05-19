@@ -83,11 +83,20 @@ def new_listing(request):
             "form": ListingForm()
         })
 
-def listing(request, listing_id: int):
+def listing(request, listing_id):
     """Renders the page for a listing"""
+
     listing = Listing.objects.get(id=listing_id)
     bids = Bid.objects.filter(listing_id=listing_id)
+    watching = bool(listing.watchers.filter(id=request.user.id))  # this can be cleaner?
     return render(request, "auctions/listing.html", {
         "listing": listing,
-        "bids": bids
+        "bids": bids,
+        "watching": watching
     })
+
+def watch(request, listing_id):
+    pass
+
+def unwatch(request, listing_id):
+    pass
