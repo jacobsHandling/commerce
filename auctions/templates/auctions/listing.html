@@ -7,9 +7,17 @@
         Current Bid: {{ listing.current_bid }}
         {% if user.is_authenticated %}
             {% if watching %}
-                <a href="{% url 'unwatch' listing.id %}">Unwatch</a>
+                <form action="{% url 'unwatch' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="listing_id" value={{ listing.id }}>
+                    <input type="submit" value="Unwatch">
+                </form>
             {% else %}
-                <a href="{% url 'watch' listing.id %}">Watch</a>
+                <form action="{% url 'watch' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="listing_id" value={{ listing.id }}>
+                    <input type="submit" value="Watch">
+                </form>
             {% endif %}
         {% endif %}        
     </div>

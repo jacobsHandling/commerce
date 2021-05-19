@@ -95,8 +95,12 @@ def listing(request, listing_id):
         "watching": watching
     })
 
-def watch(request, listing_id):
-    pass
+def watch(request):
+    if request.method == "POST":
+        listing_id = int(request.POST["listing_id"])
+        listing = Listing.objects.get(pk=listing_id)
+        request.user.watchlist.add(listing)
+        return HttpResponseRedirect(reverse("listing", args=[listing_id]))
 
 def unwatch(request, listing_id):
     pass
