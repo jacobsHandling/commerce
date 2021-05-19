@@ -95,12 +95,14 @@ def listing(request, listing_id):
         "watching": watching
     })
 
-def watch(request):
+def un_watch(request, watch: bool):
+    """If watch, adds the listing to the user's watchlist.
+     Otherwise, removes the listing from the user's watchlist."""
     if request.method == "POST":
         listing_id = int(request.POST["listing_id"])
         listing = Listing.objects.get(pk=listing_id)
-        request.user.watchlist.add(listing)
+        if watch:
+            request.user.watchlist.add(listing)
+        else:
+            request.user.watchlist.remove(listing)
         return HttpResponseRedirect(reverse("listing", args=[listing_id]))
-
-def unwatch(request, listing_id):
-    pass
