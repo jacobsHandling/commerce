@@ -86,22 +86,27 @@ def new_listing(request):
 def listing(request, listing_id):
     """Renders the page for a listing"""
 
+    def is_watching():
+        return bool(listing.watchers.filter(id=request.user.id))
+
     listing = Listing.objects.get(id=listing_id)
     bids = Bid.objects.filter(listing_id=listing_id)
-    watching = bool(listing.watchers.filter(id=request.user.id))  # this can be cleaner?
+    if is_watching():  # this can be cleaner?
+        watchlist_action = 0  #  present option to unwatch
+    else:
+        watchlist_action = 1  # present option to watch
     return render(request, "auctions/listing.html", {
         "listing": listing,
         "bids": bids,
-        "watching": watching
+        "watchlist_action": watchlist_action
     })
 
-def un_watch(request, watch: bool):
-    """If watch, adds the listing to the user's watchlist.
-     Otherwise, removes the listing from the user's watchlist."""
+def watchlist_action(request):
+    """Either adds or removes the listing to/from the user's watchlist."""
     if request.method == "POST":
         listing_id = int(request.POST["listing_id"])
         listing = Listing.objects.get(pk=listing_id)
-        if watch:
+        if int(request.POST["watchlist_action"]) == 1:
             request.user.watchlist.add(listing)
         else:
             request.user.watchlist.remove(listing)
