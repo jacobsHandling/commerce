@@ -1,5 +1,18 @@
 {% extends "auctions/layout.html" %}
 
+{% block header-script %}
+
+    {% if message %}
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                alert(`{{ message }}`);
+            })
+        </script>
+    {% endif %} 
+
+{% endblock %}
+
+
 {% block body %}
 
 <h2>{{ listing.title  }} {% if listing.category %} ({{ listing.category }}) {% endif %}</h2>
@@ -44,7 +57,7 @@
             </li>
             {% endfor %}
             <li>
-                {{ listing.starting_bid }} (starting price)
+                {{ listing.starting_price }} (starting price)
             </li
         </ol>
     </div>

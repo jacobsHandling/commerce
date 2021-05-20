@@ -33,7 +33,7 @@ class Listing(models.Model):
     description = models.TextField(max_length=512)
     # current_bid = models.ForeignKey(Bid, related_name="listing")
     current_price = models.IntegerField()
-    starting_bid = models.IntegerField()
+    starting_price = models.IntegerField()
     image_url = models.URLField(blank=True, max_length=512)
     # category = models.ManyToManyField(Category, blank=True, related_name="listings")
     category = models.CharField(max_length=64, blank=True)

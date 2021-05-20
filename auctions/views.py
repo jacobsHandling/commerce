@@ -10,10 +10,14 @@ from .forms import ListingForm, PartialBidForm
 
 
 
-def index(request):
+def index(request, success_msg=None):
     listings = Listing.objects.all()
+    message = None
+    if success_msg == 'success':
+        message = "Successfully added a new listing"
     return render(request, "auctions/index.html", {
-        "listings": listings
+        "listings": listings,
+        "message": message
     })
 
 
@@ -72,10 +76,12 @@ def register(request):
 def new_listing(request):
     """Handles creating a new listing"""
     if request.method == 'POST':
-        form = ListingForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return render(request, "auctions/index.html", {
+        listing_starter = Listing(current_price=request.POST['starting_price'])
+        listing = ListingForm(request.POST, instance=listing_starter)
+        if listing.is_valid():
+            listing.save()
+            return HttpResponseRedirect(reverse("index-success", args=['success']))
+            render(request, "auctions/index.html", {
                 "message": "New listing saved successfully!"
             })
     else:
@@ -86,36 +92,36 @@ def new_listing(request):
 def listing(request, listing_id):
     """Renders the page for a listing"""
 
-    def determine_watchlist_action():
+    # def determine_watchlist_action():
 
-        def is_watching():
-            return bool(listing.watchers.filter(id=request.user.id))
+        # def is_watching():
+        #     return not bool(listing.watchers.filter(id=request.user.id))
 
-        if is_watching():  # this can be cleaner?
-            return 0  #  present option to unwatch
-        return 1
+        # if is_watching():  # this can be cleaner?
+        #     return 0  #  present option to unwatch
+        # return 1
 
     listing = Listing.objects.get(id=listing_id)
-    bids = Bid.objects.filter(listing_id=listing_id)
+    # bids = Bid.objects.filter(listing_id=listing_id)
+    bids = listing.bids.all()
 
     return render(request, "auctions/listing.html", {
         "listing": listing,
         "bids": bids,
         "bid_form": PartialBidForm(),
-        "watchlist_action": determine_watchlist_action()
+        "watchlist_action": not bool(listing.watchers.filter(id=request.user.id))
     })
 
 @login_required
 def watchlist_action(request):
     """Either adds or removes the listing to/from the user's watchlist."""
     if request.method == "POST":
-        listing_id = int(request.POST["listing_id"])
-        listing = Listing.objects.get(pk=listing_id)
-        if int(request.POST["watchlist_action"]) == 1:
+        listing = Listing.objects.get(pk=int(request.POST["listing_id"]))
+        if request.POST["watchlist_action"] == 'True':
             request.user.watchlist.add(listing)
         else:
             request.user.watchlist.remove(listing)
-        return HttpResponseRedirect(reverse("listing", args=[listing_id]))
+        return HttpResponseRedirect(reverse("listing", args=[listing.id]))
 
 @login_required
 def bid(request):
@@ -124,7 +130,13 @@ def bid(request):
         bid_amount = int(request.POST['amount'])
         if bid_amount < listing.current_price:
             #go back to listing page, with error message
-            pass
+            return render(request, "auctions/listing.html", {
+                "listing": listing,
+                "bids": listing.bids.all(),
+                "bid_form": PartialBidForm(),
+                "watchlist_action": not bool(listing.watchers.filter(id=request.user.id)),
+                "message": "Bid amount must be greater than the current price"
+            })
         else:
             bid = Bid(amount=bid_amount, user=request.user, listing=listing)
             bid.save()

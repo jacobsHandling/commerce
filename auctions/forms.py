@@ -15,7 +15,7 @@ from .models import Listing, Bid
 class ListingForm(ModelForm):
     class Meta:
         model = Listing
-        fields = ['title', 'category','current_price', 'image_url', 'description']
+        fields = ['title', 'category','starting_price', 'image_url', 'description']
 
 class PartialBidForm(ModelForm):
     class Meta:
