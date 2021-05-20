@@ -4,8 +4,12 @@
 
 <h2>{{ listing.title  }} {% if listing.category %} ({{ listing.category }}) {% endif %}</h2>
     <div>
-        Current Bid: {{ listing.current_bid }}
+        Current Bid: {{ listing.current_price }}
+    </div>
+    <div>
         {% if user.is_authenticated %}
+
+            <!-- Option to watch/unwantch the item if user is signed in-->
             <form action="{% url 'watchlist-action' %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="listing_id" value={{ listing.id }}>
@@ -16,19 +20,32 @@
                     <input type="submit" value="Unwatch">
                 {% endif %}
             </form>
+
         {% endif %}        
+
+        <!-- Option to place a bid -->
+        <form action="{% url 'bid' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ bid_form }}
+                <input type=hidden name="listing_id" value={{ listing.id }}>
+                <input type="submit" value="Place Bid">
+            </div>
+        </form>
+
     </div>
+
     <div>
         Bid History:
-        <ol>
+        <ol reversed>
             {% for bid in bids %}
             <li>
                 {{ bid.amount }} | {{ bid.time }} | {{ bid.user }}
             </li>
             {% endfor %}
             <li>
-                Starting price: {{ listing.starting_bid }} 
-            </li>
+                {{ listing.starting_bid }} (starting price)
+            </li
         </ol>
     </div>
     <div>

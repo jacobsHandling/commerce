@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .models import User, Listing, Bid, ListingComment
-from .forms import ListingForm
+from .forms import ListingForm, PartialBidForm
 
 
 
@@ -86,21 +86,26 @@ def new_listing(request):
 def listing(request, listing_id):
     """Renders the page for a listing"""
 
-    def is_watching():
-        return bool(listing.watchers.filter(id=request.user.id))
+    def determine_watchlist_action():
+
+        def is_watching():
+            return bool(listing.watchers.filter(id=request.user.id))
+
+        if is_watching():  # this can be cleaner?
+            return 0  #  present option to unwatch
+        return 1
 
     listing = Listing.objects.get(id=listing_id)
     bids = Bid.objects.filter(listing_id=listing_id)
-    if is_watching():  # this can be cleaner?
-        watchlist_action = 0  #  present option to unwatch
-    else:
-        watchlist_action = 1  # present option to watch
+
     return render(request, "auctions/listing.html", {
         "listing": listing,
         "bids": bids,
-        "watchlist_action": watchlist_action
+        "bid_form": PartialBidForm(),
+        "watchlist_action": determine_watchlist_action()
     })
 
+@login_required
 def watchlist_action(request):
     """Either adds or removes the listing to/from the user's watchlist."""
     if request.method == "POST":
@@ -111,3 +116,18 @@ def watchlist_action(request):
         else:
             request.user.watchlist.remove(listing)
         return HttpResponseRedirect(reverse("listing", args=[listing_id]))
+
+@login_required
+def bid(request):
+    if request.method == "POST":
+        listing = Listing.objects.get(pk=int(request.POST['listing_id']))
+        bid_amount = int(request.POST['amount'])
+        if bid_amount < listing.current_price:
+            #go back to listing page, with error message
+            pass
+        else:
+            bid = Bid(amount=bid_amount, user=request.user, listing=listing)
+            bid.save()
+            listing.current_price = bid_amount
+            listing.save()
+            return HttpResponseRedirect(reverse("listing", args=[listing.id]))   # with message "bid successful"

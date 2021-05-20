@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm, TextInput, EmailInput
-from .models import Listing
+from .models import Listing, Bid
 
 # So when we handle a model instance in a view, we typically 
 # retrieve it from the database. When we’re dealing with a form we 
@@ -15,4 +15,9 @@ from .models import Listing
 class ListingForm(ModelForm):
     class Meta:
         model = Listing
-        fields = ['title', 'category','current_bid', 'image_url', 'description']
+        fields = ['title', 'category','current_price', 'image_url', 'description']
+
+class PartialBidForm(ModelForm):
+    class Meta:
+        model = Bid
+        fields = ['amount']

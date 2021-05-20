@@ -16,7 +16,7 @@
                     <div class="card-body">
                         <h3 class="card-title">{{ listing.title }}</h3>
                         <p class="card-text">
-                            Current Bid: {{ listing.current_bid }} <br>
+                            Current Bid: {{ listing.current_price }} <br>
                             Description: {{ listing.description }} <br>
                         </p>
                         <a href="{% url 'listing' listing.id %}" class="btn btn-primary">View Listing</a>
