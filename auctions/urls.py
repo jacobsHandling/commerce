@@ -11,5 +11,9 @@ urlpatterns = [
     path("listing/<int:listing_id>", views.listing, name="listing"),
     path("watchlist-action", views.watchlist_action, name="watchlist-action"),
     path("bid", views.bid, name="bid"),
+    path("close-auction", views.close_auction, name="close-auction"),
+
+
+
     path("<str:success_msg>", views.index, name="index-success")
 ]

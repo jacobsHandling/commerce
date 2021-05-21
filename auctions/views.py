@@ -11,12 +11,12 @@ from .forms import ListingForm, PartialBidForm
 
 
 def index(request, success_msg=None):
-    listings = Listing.objects.all()
+    active_listings = Listing.objects.filter(is_active=True)
     message = None
     if success_msg == 'success':
         message = "Successfully added a new listing"
     return render(request, "auctions/index.html", {
-        "listings": listings,
+        "active_listings": active_listings,
         "message": message
     })
 
@@ -76,7 +76,7 @@ def register(request):
 def new_listing(request):
     """Handles creating a new listing"""
     if request.method == 'POST':
-        listing_starter = Listing(current_price=request.POST['starting_price'])
+        listing_starter = Listing(current_price=request.POST['starting_price'], owner=request.user)
         listing = ListingForm(request.POST, instance=listing_starter)
         if listing.is_valid():
             listing.save()
@@ -143,3 +143,11 @@ def bid(request):
             listing.current_price = bid_amount
             listing.save()
             return HttpResponseRedirect(reverse("listing", args=[listing.id]))   # with message "bid successful"
+
+def close_auction(request):
+    if request.method=="POST":
+        listing = Listing.objects.get(pk=int(request.POST['listing_id']))
+        listing.is_active = False
+        listing.winner = listing.bids.first().user
+        listing.save()
+        return HttpResponseRedirect(reverse('listing', args=[listing.id]))

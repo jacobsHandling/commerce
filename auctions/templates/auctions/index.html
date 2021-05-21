@@ -15,10 +15,10 @@
 
 {% block body %}
 
-    {% if listings %}
+    {% if active_listings %}
         <h2>Active Listings</h2>
         <ul>
-            {% for listing in listings %}
+            {% for listing in active_listings %}
             <!-- see https://getbootstrap.com/docs/4.4/components/card/ -->
                 <li class="card" style="width: 18rem;">
                     {% if listing.image_url %}

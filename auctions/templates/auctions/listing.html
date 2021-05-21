@@ -16,37 +16,61 @@
 {% block body %}
 
 <h2>{{ listing.title  }} {% if listing.category %} ({{ listing.category }}) {% endif %}</h2>
+    
+
+
     <div>
         Current Bid: {{ listing.current_price }}
     </div>
-    <div>
-        {% if user.is_authenticated %}
 
-            <!-- Option to watch/unwantch the item if user is signed in-->
-            <form action="{% url 'watchlist-action' %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="listing_id" value={{ listing.id }}>
-                <input type="hidden" name="watchlist_action" value={{ watchlist_action }}>
-                {% if watchlist_action %}
-                    <input type="submit" value="Watch">
-                {% else %}
-                    <input type="submit" value="Unwatch">
+    {% if listing.is_active %}
+
+        <div>
+            {% if user.is_authenticated %}
+                {% if listing.owner == user %}
+
+                    <form action="{% url 'close-auction' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="listing_id" value={{ listing.id }}>
+                        <input type="submit" value="Close Auction">
+                    </form>
+                
                 {% endif %}
+                <!-- Option to watch/unwantch the item if user is signed in-->
+                <form action="{% url 'watchlist-action' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="listing_id" value={{ listing.id }}>
+                    <input type="hidden" name="watchlist_action" value={{ watchlist_action }}>
+                    {% if watchlist_action %}
+                        <input type="submit" value="Watch">
+                    {% else %}
+                        <input type="submit" value="Unwatch">
+                    {% endif %}
+                </form>
+
+            {% endif %}        
+
+            <!-- Option to place a bid -->
+            <form action="{% url 'bid' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ bid_form }}
+                    <input type=hidden name="listing_id" value={{ listing.id }}>
+                    <input type="submit" value="Place Bid">
+                </div>
             </form>
 
-        {% endif %}        
+        </div>
+    
+    {% else %}
+        <center>
+            <h3>Auction Ended</h3>
 
-        <!-- Option to place a bid -->
-        <form action="{% url 'bid' %}" method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                {{ bid_form }}
-                <input type=hidden name="listing_id" value={{ listing.id }}>
-                <input type="submit" value="Place Bid">
-            </div>
-        </form>
-
-    </div>
+            {% if listing.winner == user %}
+                <strong>Congratulations, you've won!</strong>
+            {% endif %}
+        </center>
+    {% endif %}
 
     <div>
         Bid History:
