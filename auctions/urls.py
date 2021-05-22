@@ -12,7 +12,7 @@ urlpatterns = [
     path("watchlist-action", views.watchlist_action, name="watchlist-action"),
     path("bid", views.bid, name="bid"),
     path("close-auction", views.close_auction, name="close-auction"),
-
+    path("comment", views.comment, name="comment"),
 
 
     path("<str:success_msg>", views.index, name="index-success")

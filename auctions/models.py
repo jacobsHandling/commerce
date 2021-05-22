@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models.aggregates import Max
+from django.db.models.deletion import CASCADE
 from django.db.models.fields import IntegerField, related
 
 
@@ -45,6 +46,8 @@ class Listing(models.Model):
         return f"{self.title}: {self.description}\n"
 
 class ListingComment(models.Model):
-    user = models.CharField(max_length=64)
-    content = models.TextField()
+    user = models.ForeignKey(User, on_delete=CASCADE, related_name="comments")
+    listing = models.ForeignKey(Listing, on_delete=CASCADE, related_name="comments")
+    comment = models.TextField(max_length=2200)
+    time = models.DateTimeField(auto_now_add=True)
 

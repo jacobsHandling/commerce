@@ -1,3 +1,4 @@
+from typing import List
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -6,7 +7,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .models import User, Listing, Bid, ListingComment
-from .forms import ListingForm, PartialBidForm
+from .forms import ListingForm, PartialBidForm, PartialCommentForm
 
 
 
@@ -103,12 +104,13 @@ def listing(request, listing_id):
 
     listing = Listing.objects.get(id=listing_id)
     # bids = Bid.objects.filter(listing_id=listing_id)
-    bids = listing.bids.all()
 
     return render(request, "auctions/listing.html", {
         "listing": listing,
-        "bids": bids,
+        "bids": listing.bids.all(),
         "bid_form": PartialBidForm(),
+        "comments": listing.comments.all(),
+        "comment_form": PartialCommentForm(),
         "watchlist_action": not bool(listing.watchers.filter(id=request.user.id))
     })
 
@@ -150,4 +152,12 @@ def close_auction(request):
         listing.is_active = False
         listing.winner = listing.bids.first().user
         listing.save()
+        return HttpResponseRedirect(reverse('listing', args=[listing.id]))
+
+@login_required
+def comment(request):
+    if request.method == "POST":
+        listing = Listing.objects.get(pk=int(request.POST['listing_id']))
+        new_comment = ListingComment(user=request.user, listing=listing, content=request.POST['comment'])
+        new_comment.save()
         return HttpResponseRedirect(reverse('listing', args=[listing.id]))

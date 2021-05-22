@@ -60,6 +60,15 @@
                 </div>
             </form>
 
+            <!-- Option to leave a comment -->
+            <form action="{% url 'comment' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ comment_form }}
+                    <input type=hidden name="listing_id" value={{ listing.id }}>
+                    <input type="submit" value="Submit">
+                </div>
+            </form>
         </div>
     
     {% else %}
@@ -90,6 +99,21 @@
     </div>
     <div>
         {{ listing.description }}
+    </div>
+    <div>
+        {% if comments %}
+            <h3>Comments</h3>
+            <ul>
+                {% for comment in comments %}
+                    <li>
+                        <em>{{ comment.time }} | {{ comment.user }}:</em>
+                            <p>{{ comment.comment }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <h3>No Comments</h3>
+        {% endif %}
     </div>
     
 {% endblock %}
