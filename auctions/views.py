@@ -126,6 +126,12 @@ def watchlist_action(request):
         return HttpResponseRedirect(reverse("listing", args=[listing.id]))
 
 @login_required
+def watchlist(request):
+    watchlist = Listing.objects.filter(watchers__pk=request.user.pk)  # see https://docs.djangoproject.com/en/3.2/topics/db/queries/#lookups-that-span-relationships
+    return render(request, "auctions/watchlist.html", {
+        "watchlist": watchlist
+    })
+@login_required
 def bid(request):
     if request.method == "POST":
         listing = Listing.objects.get(pk=int(request.POST['listing_id']))
