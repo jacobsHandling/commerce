@@ -6,7 +6,7 @@
         <h2>Watchlist</h2>
             <ul>
                 {% for listing in watchlist %}   
-                    <li><a href="{% url 'listing' listing.id %}">{{listing.title }}</li></a>
+                    <li><a href="{% url 'listing' listing.id %}">{{ listing.title }}</a></li>
                 {% endfor %}
             </ul>
     {% else %}

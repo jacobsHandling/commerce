@@ -10,12 +10,13 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.username}"
-# class Category(models.Model):
-#     name = models.CharField(max_length=64)
-#     # listings = models.ManyToManyField(Listing, blank=True, related_name="categories")
 
-#     def __str__(self):
-#         return f"{self.name}"
+class Category(models.Model):
+    name = models.CharField(max_length=64)
+    # listings = models.ManyToManyField('Listing', related_name="listing_categories")
+
+    def __str__(self):
+        return f"{self.name}"
 
 class Bid(models.Model):
     amount = models.IntegerField()
@@ -36,11 +37,16 @@ class Listing(models.Model):
     current_price = models.IntegerField()
     starting_price = models.IntegerField()
     image_url = models.URLField(blank=True, max_length=512)
-    # category = models.ManyToManyField(Category, blank=True, related_name="listings")
-    category = models.CharField(max_length=64, blank=True)
+    categories = models.ManyToManyField(Category, blank=True)  # , related_name="listings")
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings")
     is_active = models.BooleanField(default=True)
-    winner = models.ForeignKey(User, on_delete=models.CASCADE,related_name="won_auctions", null= True, blank=True)
+    winner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="won_auctions",
+        null= True,
+        blank=True
+    )
 
     def __str__(self):
         return f"{self.title}: {self.description}\n"

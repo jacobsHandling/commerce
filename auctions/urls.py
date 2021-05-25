@@ -4,6 +4,8 @@ from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
+    path("categories", views.categories, name="categories"),
+    path("category-listings/<int:category_id>", views.category_listings, name="category-listings"),
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
@@ -16,5 +18,5 @@ urlpatterns = [
     path("comment", views.comment, name="comment"),
 
 
-    path("<str:success_msg>", views.index, name="index-success")
+    path("<str:msg>", views.index, name="index-message")
 ]

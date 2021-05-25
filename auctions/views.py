@@ -6,21 +6,45 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Listing, Bid, ListingComment
+from .models import User, Listing, Bid, ListingComment, Category
 from .forms import ListingForm, PartialBidForm, PartialCommentForm
 
 
 
-def index(request, success_msg=None):
+def index(request, msg = None):
     active_listings = Listing.objects.filter(is_active=True)
     message = None
-    if success_msg == 'success':
-        message = "Successfully added a new listing"
+    if msg:
+        message_options = {
+            'success': 'New listing added successfully',
+            'fail': 'Invalid listing entry - not saved'
+        }
+        message = message_options[msg]
+
     return render(request, "auctions/index.html", {
         "active_listings": active_listings,
         "message": message
     })
 
+def categories(request):
+
+    categories = Category.objects.all()
+
+    return render(request, "auctions/categories.html", {
+        "categories": categories
+    })
+
+def category_listings(request, category_id: int):
+
+    category = Category.objects.get(pk=category_id)
+    # listings = Category.listings.filter(categories__in=category)
+    # listings = Listing.objects.filter(categories__in=category)
+    active_listings = category.listing_set.filter(is_active=True)
+
+    return render(request, "auctions/category_listings.html", {
+        "category": category, 
+        "active_listings": active_listings
+    })
 
 def login_view(request):
     if request.method == "POST":
@@ -41,11 +65,9 @@ def login_view(request):
     else:
         return render(request, "auctions/login.html")
 
-
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
-
 
 def register(request):
     if request.method == "POST":
@@ -76,15 +98,36 @@ def register(request):
 @login_required
 def new_listing(request):
     """Handles creating a new listing"""
+ 
     if request.method == 'POST':
+
+    # for each comma-separated category name entered, create a new category DB row if there isn't one already
+        # categories_to_add = []
+        # for category_name in request.POST['categories'].split(','):
+        #     new_cat = Category(name=category_name)
+        #     new_cat.save()
+        #     categories_to_add.append(new_cat)
+
+        # listing = Listing(
+        #     title=request.POST['title'],
+        #     categories=categories_to_add,
+        #     starting_price=request.POST['starting_price'],
+        #     image_url=request.POST['image_url'],
+        #     description=request.POST['description'],
+        #     current_price=request.POST['starting_price'],
+        #     owner=request.user
+        # )
         listing_starter = Listing(current_price=request.POST['starting_price'], owner=request.user)
         listing = ListingForm(request.POST, instance=listing_starter)
+
         if listing.is_valid():
             listing.save()
-            return HttpResponseRedirect(reverse("index-success", args=['success']))
+            return HttpResponseRedirect(reverse("index-message", args=['success']))
             render(request, "auctions/index.html", {
                 "message": "New listing saved successfully!"
             })
+        else:
+            return HttpResponseRedirect(reverse("index-message", args=['fail']))
     else:
         return render(request, "auctions/new_listing.html", {
             "form": ListingForm()
@@ -131,6 +174,7 @@ def watchlist(request):
     return render(request, "auctions/watchlist.html", {
         "watchlist": watchlist
     })
+
 @login_required
 def bid(request):
     if request.method == "POST":
@@ -147,7 +191,8 @@ def bid(request):
             })
         else:
             bid = Bid(amount=bid_amount, user=request.user, listing=listing)
-            bid.save()
+            if bid.is_valid():
+                bid.save()
             listing.current_price = bid_amount
             listing.save()
             return HttpResponseRedirect(reverse("listing", args=[listing.id]))   # with message "bid successful"
@@ -156,7 +201,10 @@ def close_auction(request):
     if request.method=="POST":
         listing = Listing.objects.get(pk=int(request.POST['listing_id']))
         listing.is_active = False
-        listing.winner = listing.bids.first().user
+        if listing.bids.first():
+            listing.winner = listing.bids.first().user
+        else:
+            listing.winner = None
         listing.save()
         return HttpResponseRedirect(reverse('listing', args=[listing.id]))
 

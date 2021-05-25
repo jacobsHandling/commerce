@@ -16,7 +16,8 @@ from .models import Listing, Bid, ListingComment
 class ListingForm(ModelForm):
     class Meta:
         model = Listing
-        fields = ['title', 'category','starting_price', 'image_url', 'description']
+        widgets = {'categories': forms.CheckboxSelectMultiple}
+        fields = ['title', 'categories','starting_price', 'image_url', 'description']
 
 class PartialBidForm(ModelForm):
     class Meta:
