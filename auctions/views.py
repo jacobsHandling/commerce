@@ -191,8 +191,7 @@ def bid(request):
             })
         else:
             bid = Bid(amount=bid_amount, user=request.user, listing=listing)
-            if bid.is_valid():
-                bid.save()
+            bid.save()
             listing.current_price = bid_amount
             listing.save()
             return HttpResponseRedirect(reverse("listing", args=[listing.id]))   # with message "bid successful"

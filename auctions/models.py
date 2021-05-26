@@ -15,6 +15,9 @@ class Category(models.Model):
     name = models.CharField(max_length=64)
     # listings = models.ManyToManyField('Listing', related_name="listing_categories")
 
+    class Meta:
+        ordering = ('name',)
+
     def __str__(self):
         return f"{self.name}"
 
