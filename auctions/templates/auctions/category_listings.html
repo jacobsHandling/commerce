@@ -2,13 +2,36 @@
 
 {% block body %}
     <h2>{{ category.name }}</h2>
-
-        <ul>
+    <div class="album py-5 bg-light">
+        <div class="container">
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        
             {% for listing in active_listings %}
-                <li><a href="{% url 'listing' listing.id %}">{{ listing.title }}</a></li>
+                <div class="col">
+                    <div class="card shadow-sm listing-card">
+                        {% if listing.image_url %}
+                            <img src={{ listing.image_url }} class="bd-placeholder-img card-img-top" width="100%" height="325" preserveAspectRatio="xMidYMid slice">
+                        {% else %}
+                            <svg class="bd-placeholder-img card-img-top" width="100%" height="325" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/></svg>
+                        {% endif %}
+                        <title>{{ listing.title }}</title>
+                        <h3 style="text-align: center" x="50%" y="50%" fill="#eceeef" dy=".3em" >{{ listing.title }}</h3>
+                        <div class="card-body">
+                            <p style="text-align: center" class="card-text">
+                                Current Bid: {{ listing.current_price }}<br>
+                                Description: {{ listing.description }}
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <a href="{% url 'listing' listing.id %}" class="btn btn-sm btn-outline-secondary">View</a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div> 
             {% empty %}
                 <h3>No active {{ category.name }} listings</h3>
             {% endfor %}
-        </ul>
     
 {% endblock %}
