@@ -211,6 +211,6 @@ def close_auction(request):
 def comment(request):
     if request.method == "POST":
         listing = Listing.objects.get(pk=int(request.POST['listing_id']))
-        new_comment = ListingComment(user=request.user, listing=listing, content=request.POST['comment'])
+        new_comment = ListingComment(user=request.user, listing=listing, comment=request.POST['comment'])
         new_comment.save()
         return HttpResponseRedirect(reverse('listing', args=[listing.id]))
