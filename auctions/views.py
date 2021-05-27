@@ -10,7 +10,6 @@ from .models import User, Listing, Bid, ListingComment, Category
 from .forms import ListingForm, PartialBidForm, PartialCommentForm
 
 
-
 def index(request, msg = None):
     active_listings = Listing.objects.filter(is_active=True)
     message = None
@@ -37,8 +36,6 @@ def categories(request):
 def category_listings(request, category_id: int):
 
     category = Category.objects.get(pk=category_id)
-    # listings = Category.listings.filter(categories__in=category)
-    # listings = Listing.objects.filter(categories__in=category)
     active_listings = category.listing_set.filter(is_active=True)
 
     return render(request, "auctions/category_listings.html", {
@@ -100,32 +97,12 @@ def new_listing(request):
     """Handles creating a new listing"""
  
     if request.method == 'POST':
-
-    # for each comma-separated category name entered, create a new category DB row if there isn't one already
-        # categories_to_add = []
-        # for category_name in request.POST['categories'].split(','):
-        #     new_cat = Category(name=category_name)
-        #     new_cat.save()
-        #     categories_to_add.append(new_cat)
-
-        # listing = Listing(
-        #     title=request.POST['title'],
-        #     categories=categories_to_add,
-        #     starting_price=request.POST['starting_price'],
-        #     image_url=request.POST['image_url'],
-        #     description=request.POST['description'],
-        #     current_price=request.POST['starting_price'],
-        #     owner=request.user
-        # )
         listing_starter = Listing(current_price=request.POST['starting_price'], owner=request.user)
         listing = ListingForm(request.POST, instance=listing_starter)
 
         if listing.is_valid():
             listing.save()
             return HttpResponseRedirect(reverse("index-message", args=['success']))
-            render(request, "auctions/index.html", {
-                "message": "New listing saved successfully!"
-            })
         else:
             return HttpResponseRedirect(reverse("index-message", args=['fail']))
     else:
@@ -136,18 +113,7 @@ def new_listing(request):
 def listing(request, listing_id):
     """Renders the page for a listing"""
 
-    # def determine_watchlist_action():
-
-        # def is_watching():
-        #     return not bool(listing.watchers.filter(id=request.user.id))
-
-        # if is_watching():  # this can be cleaner?
-        #     return 0  #  present option to unwatch
-        # return 1
-
     listing = Listing.objects.get(id=listing_id)
-    # bids = Bid.objects.filter(listing_id=listing_id)
-
     return render(request, "auctions/listing.html", {
         "listing": listing,
         "bids": listing.bids.all(),
@@ -170,7 +136,7 @@ def watchlist_action(request):
 
 @login_required
 def watchlist(request):
-    watchlist = Listing.objects.filter(watchers__pk=request.user.pk)  # see https://docs.djangoproject.com/en/3.2/topics/db/queries/#lookups-that-span-relationships
+    watchlist = Listing.objects.filter(watchers__pk=request.user.pk)  # https://docs.djangoproject.com/en/3.2/topics/db/queries/#lookups-that-span-relationships
     return render(request, "auctions/watchlist.html", {
         "watchlist": watchlist
     })

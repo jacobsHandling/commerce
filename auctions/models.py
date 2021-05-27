@@ -13,7 +13,6 @@ class User(AbstractUser):
 
 class Category(models.Model):
     name = models.CharField(max_length=64)
-    # listings = models.ManyToManyField('Listing', related_name="listing_categories")
 
     class Meta:
         ordering = ('name',)
@@ -36,11 +35,10 @@ class Bid(models.Model):
 class Listing(models.Model):
     title = models.CharField(max_length=64)
     description = models.TextField(max_length=512)
-    # current_bid = models.ForeignKey(Bid, related_name="listing")
     current_price = models.IntegerField()
     starting_price = models.IntegerField()
     image_url = models.URLField(blank=True, max_length=512)
-    categories = models.ManyToManyField(Category, blank=True)  # , related_name="listings")
+    categories = models.ManyToManyField(Category, blank=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings")
     is_active = models.BooleanField(default=True)
     winner = models.ForeignKey(
@@ -59,4 +57,3 @@ class ListingComment(models.Model):
     listing = models.ForeignKey(Listing, on_delete=CASCADE, related_name="comments")
     comment = models.TextField(max_length=2200)
     time = models.DateTimeField(auto_now_add=True)
-

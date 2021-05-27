@@ -17,6 +17,5 @@ urlpatterns = [
     path("close-auction", views.close_auction, name="close-auction"),
     path("comment", views.comment, name="comment"),
 
-
     path("<str:msg>", views.index, name="index-message")
 ]
