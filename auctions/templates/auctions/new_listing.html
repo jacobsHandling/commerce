@@ -5,9 +5,7 @@
 
     <form action="{% url 'new-listing' %}" method="post">
         {% csrf_token %}
-        <div class="form-group">
-            {{ form }}
-            <input type="submit" value="Save">
-        </div>
+        {{ form }}
+        <input type="submit" value="Save">
     </form>
 {% endblock %}

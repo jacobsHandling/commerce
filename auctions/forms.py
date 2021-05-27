@@ -53,6 +53,11 @@ class ListingForm(ModelForm):
         fields = ['title', 'categories','starting_price', 'image_url', 'description']
 
 class PartialBidForm(ModelForm):
+    amount = forms.IntegerField(widget=forms.NumberInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Bid Amount'
+    }), label='')
+    
     class Meta:
         model = Bid
         fields = ['amount']
@@ -60,4 +65,11 @@ class PartialBidForm(ModelForm):
 class PartialCommentForm(ModelForm):
     class Meta:
         model = ListingComment
+        widgets = {
+            'comment': forms.Textarea(
+                attrs={
+                    'class': 'form-control'
+                }
+            )
+        }
         fields = ['comment']

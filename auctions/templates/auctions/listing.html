@@ -19,57 +19,54 @@
     
 
 
-    <div>
+    <p>
         Current Bid: {{ listing.current_price }}
-    </div>
+    </p>
 
-    {% if listing.is_active %}
-
-        <div>
+    <ul class="nav">
+        {% if listing.is_active %}
             {% if user.is_authenticated %}
                 {% if listing.owner == user %}
+                <!-- option to end the listing -->
+                    <li class="nav-item">
+                        <form action="{% url 'close-auction' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="listing_id" value={{ listing.id }}>
+                            <input class="form-control" type="submit" value="Close Auction">
+                        </form>
 
-                    <form action="{% url 'close-auction' %}" method="post">
+                {% endif %}
+
+                <!-- Option to watch/unwantch the item -->
+                <li class="nav-item">
+                    <form action="{% url 'watchlist-action' %}" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="listing_id" value={{ listing.id }}>
-                        <input type="submit" value="Close Auction">
+                        <input type="hidden" name="watchlist_action" value={{ watchlist_action }}>
+                        {% if watchlist_action %}
+                            <input class="form-control" type="submit" value="Watch">
+                        {% else %}
+                            <input class="form-control" type="submit" value="Unwatch">
+                        {% endif %}
                     </form>
-                
-                {% endif %}
-                <!-- Option to watch/unwantch the item if user is signed in-->
-                <form action="{% url 'watchlist-action' %}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="listing_id" value={{ listing.id }}>
-                    <input type="hidden" name="watchlist_action" value={{ watchlist_action }}>
-                    {% if watchlist_action %}
-                        <input type="submit" value="Watch">
-                    {% else %}
-                        <input type="submit" value="Unwatch">
-                    {% endif %}
-                </form>
-
+                </li>
             {% endif %}        
 
-            <!-- Option to place a bid -->
-            <form action="{% url 'bid' %}" method="post">
-                {% csrf_token %}
-                <div class="form-group">
-                    {{ bid_form }}
-                    <input type=hidden name="listing_id" value={{ listing.id }}>
-                    <input type="submit" value="Place Bid">
-                </div>
-            </form>
+                <!-- Option to place a bid - allowed even if logged out, will redirect to login-->
+                <li class="nav-item">
+                    <form action="{% url 'bid' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            {{ bid_form }}
+                            <input type=hidden name="listing_id" value={{ listing.id }}>
+                            <input class="form-control" type="submit" value="Place Bid">
+                        </div>
+                    </form>
+                </li> 
+            </ul>
+            
 
-            <!-- Option to leave a comment -->
-            <form action="{% url 'comment' %}" method="post">
-                {% csrf_token %}
-                <div class="form-group">
-                    {{ comment_form }}
-                    <input type=hidden name="listing_id" value={{ listing.id }}>
-                    <input type="submit" value="Submit">
-                </div>
-            </form>
-        </div>
+
     
     {% else %}
         <center>
@@ -81,7 +78,6 @@
         </center>
     {% endif %}
 
-    <div>
         Bid History:
         <ol reversed>
             {% for bid in bids %}
@@ -93,14 +89,16 @@
                 {{ listing.starting_price }} (starting price)
             </li
         </ol>
-    </div>
-    <div>
-        <img src={{ listing.image_url }} height="100px">
-    </div>
-    <div>
+        
+        <br>
+
+        <img src={{ listing.image_url }} height="325px"><br>
+
         {{ listing.description }}
-    </div>
-    <div>
+
+        <br>
+        <br>
+
         {% if comments %}
             <h3>Comments</h3>
             <ul>
@@ -114,6 +112,15 @@
         {% else %}
             <h3>No Comments</h3>
         {% endif %}
-    </div>
+    
+<!-- Option to leave a comment -->
+    <form action="{% url 'comment' %}" method="post" class="form-control">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ comment_form }}
+            <input type=hidden name="listing_id" value={{ listing.id }}>
+            <input type="submit" value="Submit">
+        </div>
+    </form>
     
 {% endblock %}
